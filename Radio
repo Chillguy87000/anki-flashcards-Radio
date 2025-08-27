@@ -1,0 +1,90 @@
+# make_apkg.py
+# Génère rayonnements.apkg avec genanki
+import genanki
+
+cards = [
+    ("Quelles sont les deux grandes classifications des rayonnements selon leur nature ?",
+     "Particulaire et électromagnétique.", "classification"),
+    ("Sur quels critères peut-on classer les rayonnements ?",
+     "Selon l’énergie transportée et leur nature (particulaire/électromagnétique), et selon ionisants / non ionisants, directement ou indirectement ionisants.", "classification"),
+    ("Donne des exemples de particules fondamentales citées dans le cours.",
+     "Proton, neutron, électron (β−).", "particules"),
+    ("Citer d'autres particules mentionnées (autres que fondamentales).",
+     "Positron (β+), noyau d’hélium (α), neutrino et antineutrino.", "particules"),
+    ("Quelles propriétés fondamentales ont les rayonnements électromagnétiques ?",
+     "Sans masse, sans charge ; même nature physique mais différentes énergies, longueurs d’onde et fréquences.", "electromagnetique"),
+    ("Valeur de la célérité de la lumière dans le vide (c) utilisée dans le cours ?",
+     "c = 3 × 10^8 m·s⁻¹.", "constantes"),
+    ("Exprime la relation entre longueur d’onde λ, vitesse c et fréquence ν.",
+     "λ = c / ν (et λ = c · T où T = 1/ν).", "formules"),
+    ("Écriture de l’énergie d’un photon en fonction de sa fréquence (formule) ?",
+     "E = h·ν, où h est la constante de Planck.", "formules"),
+    ("Valeur approchée de la constante de Planck fournie dans le cours ?",
+     "h ≈ 6,62 × 10⁻³⁴ J·s.", "constantes"),
+    ("Relation énergie ↔ longueur d’onde (λ) pour un photon ?",
+     "E = h·c / λ.", "formules"),
+    ("Définition simple : qu’est-ce qu’une onde électromagnétique (modèle ondulatoire) ?",
+     "Association d’un champ électrique E et d’un champ magnétique B sinusoïdaux, perpendiculaires entre eux et à la direction de propagation.", "onde"),
+    ("Qu’explique bien le modèle ondulatoire ?",
+     "Lois de l’optique géométrique, interférences, polarisation.", "onde"),
+    ("Limite d’explication du modèle ondulatoire — quel effet nécessite le modèle corpusculaire ?",
+     "L’effet photoélectrique et autres interactions avec niveaux d’énergie quantifiés nécessitent l’approche corpusculaire/quantique.", "onde-corpuscule"),
+    ("En quoi consiste le modèle corpusculaire (photons) ?",
+     "La lumière est un flux discontinu de photons, chaque photon transporte l’énergie E = h·ν ; propagation en ligne droite à la vitesse c.", "onde-corpuscule"),
+    ("Qu’entend-on par dualité onde-corpuscule selon le cours ?",
+     "Les deux modèles sont complémentaires : l’ondulatoire pour phénomènes macroscopiques, le corpusculaire pour interactions quantifiées ; le choix dépend du phénomène étudié.", "onde-corpuscule"),
+    ("Définition : qu’est-ce qu’un rayonnement ionisant (RI) ?",
+     "Un rayonnement dont l’énergie est suffisante pour provoquer l’ionisation d’atomes ou molécules (effets biologiques).", "ionisation"),
+    ("Où se situe approximativement la frontière entre RI et RNI (en eV) ?",
+     "Aux alentours de 13,6 eV (énergie d’ionisation de l’eau / proche des UV).", "ionisation"),
+    ("Exemples d’atomes et leurs énergies d’ionisation citées dans le cours (H, C, O, N) ?",
+     "H ≈ 13,54 eV ; C ≈ 11,24 eV ; O ≈ 13,57 eV ; N ≈ 14,24 eV.", "ionisation"),
+    ("Qu’est-ce qu’un rayonnement directement ionisant ?",
+     "Rayonnements constitués de particules chargées qui déposent directement leur énergie dans la matière (ex: électrons, positrons, particules chargées lourdes).", "ionisation"),
+    ("Qu’est-ce qu’un rayonnement indirectement ionisant ?",
+     "Rayonnements électriquement neutres (ex : photons de haute énergie, neutrons) qui transfèrent d’abord leur énergie à des particules chargées qui ionisent ensuite.", "ionisation"),
+    ("Formule et unité de l’intensité énergétique I(u) donnée dans le cours ?",
+     "I(u) = dΦ / dΩ, exprimée en watt·stéradian⁻¹ (W·sr⁻¹).", "spectre"),
+    ("Que représente un spectre de raies (cas discret) ?",
+     "Représentation où chaque raie correspond à une des fréquences distinctes présentes (intensité en ordonnée, fréquence en abscisse).", "spectre"),
+    ("Que représente un spectre continu (cas continu) ?",
+     "Densité spectrale dI/dν en fonction de ν ; toutes les fréquences entre une valeur minimale et maximale sont présentes ; l’intensité entre u et v est l’aire sous la courbe.", "spectre"),
+    ("Qu’est-ce que l’indice de réfraction n d’un milieu pour une lumière monochromatique ?",
+     "n = c / v (c vitesse dans le vide, v vitesse dans le milieu) ; n > 1 pour un milieu transparent.", "optique"),
+    ("Que signifie “photons d’énergie trop faible” dans le cours ?",
+     "Pour les rayonnements de faible fréquence, l’énergie des photons est trop faible pour interagir par transitions quantifiées ; on décrit alors leur comportement ondulatoire.", "onde-corpuscule"),
+    ("Donner un exemple d’application des rayonnements électromagnétiques très énergétiques vs peu énergétiques (selon la diapos).",
+     "Peu énergétiques : ondes radio, IR (TV/FM) ; très énergétiques : rayons X, γ utilisés en diagnostic/therapie.", "applications"),
+    ("Quelle est l’expression numérique typique utilisée pour la fréquence des ondes radio/TV selon le cours (ordre de grandeur) ?",
+     "Ordres de grandeur mentionnés : ~10^6–10^14 Hz selon la bande (ex: TV/FM autour de 10^6–10^8 Hz ; lumière ~10^14–10^15 Hz).", "ordre_de_grandeur"),
+    ("Qu’est-ce que l’effet photoélectrique (contexte expliqué dans le cours) ?",
+     "Interaction où un photon avec énergie ≥ ΔE provoque l’éjection d’un électron d’un état lié ; nécessite approche corpusculaire pour être expliquée.", "photoelectrique"),
+    ("Rappelle la définition simple d’un photon.",
+     "Quantum d’énergie électromagnétique, sans masse, énergie E = hν.", "photon"),
+    ("Pourquoi choisit-on parfois la description corpusculaire plutôt qu’ondulatoire ?",
+     "Pour expliquer des interactions à l’échelle atomique/quantifiée (transitions entre niveaux d’énergie, ionisation, photoélectrique).", "onde-corpuscule"),
+    ("Comment l’intensité énergétique d’un rayonnement dépend-elle de l’amplitude des champs E et B ?",
+     "Le flux de puissance par unité de surface est proportionnel au produit des amplitudes de E et B (intensité énergétique liée aux amplitudes).", "intensite"),
+    ("Donne une façon pratique d’organiser ces cartes dans Anki (tags/decks) proposée implicitement par le cours.",
+     "Créer un deck “Rayonnements”, puis tags : #classification, #onde-corpuscule, #ionisation, #spectre, #formules ; séparer en sous-decks si tu veux (Electromagnétiques / Particules).", "organisation")
+]
+
+model = genanki.Model(
+  1607392319,
+  'Simple Model',
+  fields=[{'name': 'Front'}, {'name': 'Back'}, {'name': 'Tags'}],
+  templates=[{
+      'name': 'Card 1',
+      'qfmt': '{{Front}}',
+      'afmt': '{{Front}}<hr id="answer">{{Back}}',
+  }]
+)
+
+deck = genanki.Deck(2059400110, 'Rayonnements - Cours')
+
+for front, back, tags in cards:
+    note = genanki.Note(model=model, fields=[front, back, tags])
+    deck.add_note(note)
+
+genanki.Package(deck).write_to_file('rayonnements.apkg')
+print("rayonnements.apkg créé.")
